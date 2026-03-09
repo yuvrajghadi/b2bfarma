@@ -9,7 +9,7 @@
     "start:dev": "nest start --watch",
     "start:dev:alt": "cross-env PORT=3001 nest start --watch",
     "build": "nest build",
-    "start:prod": "node dist/main.js",
+   "start:prod": "node dist/src/main.js",
     "check-port": "powershell -ExecutionPolicy Bypass -File ./scripts/check-port.ps1",
     "kill-node": "powershell -ExecutionPolicy Bypass -File ./scripts/kill-all-node.ps1",
     "typeorm": "typeorm-ts-node-commonjs",
