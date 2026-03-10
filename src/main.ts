@@ -8,7 +8,10 @@ import { json, urlencoded } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
+  // Security middleware
   app.use(helmet());
+
+  // Allow large JSON payloads (for payments/webhooks etc.)
   app.use(
     json({
       verify: (req: any, _res, buf) => {
@@ -17,6 +20,7 @@ async function bootstrap() {
       limit: '2mb',
     }),
   );
+
   app.use(
     urlencoded({
       extended: true,
@@ -27,7 +31,15 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
+  // Enable CORS for mobile app / frontend
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+    credentials: true,
+  });
+
+  // Global validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -35,11 +47,13 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // Global error filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  
+
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`💾 Database URL: ${process.env.DATABASE_URL}`);
