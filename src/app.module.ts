@@ -50,38 +50,16 @@ import { StockLog } from './modules/products/stock-log.entity';
         ],
       }),
     }),
- TypeOrmModule.forRootAsync({
-  inject: [ConfigService],
-  useFactory: (configService: ConfigService) => ({
-    type: 'postgres',
-    host: configService.get<string>('DATABASE_HOST'),
-    port: configService.get<number>('DATABASE_PORT'),
-    username: configService.get<string>('DATABASE_USERNAME'),
-    password: configService.get<string>('DATABASE_PASSWORD'),
-    database: configService.get<string>('DATABASE_NAME'),
-    ssl: configService.get<boolean>('DATABASE_SSL')
-      ? { rejectUnauthorized: false }
-      : false,
-    entities: [
-      User,
-      Role,
-      Product,
-      ProductBatch,
-      Category,
-      Brand,
-      Cart,
-      CartItem,
-      Order,
-      OrderItem,
-      Payment,
-      Shipment,
-      StockLog,
-    ],
-    synchronize: true, // 👈 FORCE ENABLE
-    migrations: ['dist/migrations/*.js'],
-    migrationsRun: true,
-  }),
-}),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: () => ({
+        type: 'postgres',
+        url: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+        autoLoadEntities: true,
+        synchronize: true, // Set to false in production if needed
+      }),
+    }),
     RolesModule,
     BrandsModule,
     CategoriesModule,

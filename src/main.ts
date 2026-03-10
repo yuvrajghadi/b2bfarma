@@ -42,7 +42,7 @@ async function bootstrap() {
   
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`💾 Database: ${process.env.DATABASE_NAME}@${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}`);
+  console.log(`💾 Database URL: ${process.env.DATABASE_URL}`);
 }
 
 bootstrap().catch((err) => {
