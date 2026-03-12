@@ -4,6 +4,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import helmet from 'helmet';
 import { json, urlencoded } from 'express';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './modules/users/user.entity';
+import { RolesService } from './modules/roles/roles.service';
+import { seedAdminUser } from './modules/users/admin.seed';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -50,6 +55,11 @@ async function bootstrap() {
 
   // Global error filter
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // Seed admin user on startup
+  const userRepository = app.get<Repository<User>>(getRepositoryToken(User));
+  const rolesService = app.get(RolesService);
+  await seedAdminUser(userRepository, rolesService);
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
